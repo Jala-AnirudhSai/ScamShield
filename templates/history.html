@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+
+{% block content %}
+<header class="page-header">
+    <div>
+        <h1>Analysis History Log</h1>
+        <p class="subtitle">Complete archive of previously analyzed messages and URL scans.</p>
+    </div>
+    {% if scans %}
+    <form action="{{ url_for('clear_history') }}" method="POST" onsubmit="return confirm('Are you sure you want to clear all history? This action cannot be undone.');">
+        <button type="submit" class="btn btn-danger-outline"><i class="fa-solid fa-trash-can"></i> Clear All History</button>
+    </form>
+    {% endif %}
+</header>
+
+<section class="card">
+    {% if scans %}
+    <div class="table-responsive">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Timestamp</th>
+                    <th>Message Snippet</th>
+                    <th>Risk Score</th>
+                    <th>Risk Level</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for scan in scans %}
+                <tr>
+                    <td>#{{ scan.id }}</td>
+                    <td class="timestamp">{{ scan.timestamp }}</td>
+                    <td class="snippet">{{ scan.message[:80] }}{% if scan.message|length > 80 %}...{% endif %}</td>
+                    <td><strong>{{ scan.risk_score }}/100</strong></td>
+                    <td>
+                        <span class="badge badge-{{ scan.risk_level|lower }}">{{ scan.risk_level }}</span>
+                    </td>
+                    <td>
+                        <a href="{{ url_for('view_scan', scan_id=scan.id) }}" class="btn btn-sm btn-outline"><i class="fa-solid fa-eye"></i> Report</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="empty-state">
+        <i class="fa-solid fa-folder-open"></i>
+        <p>No analysis records found in database.</p>
+        <a href="{{ url_for('index') }}" class="btn btn-primary mt-2">Go to Scanner</a>
+    </div>
+    {% endif %}
+</section>
+{% endblock %}

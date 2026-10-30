@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+
+{% block content %}
+<header class="page-header">
+    <div>
+        <h1>Analysis Results Report</h1>
+        <p class="subtitle">Scam risk evaluation and threat diagnostic breakdown.</p>
+    </div>
+    <a href="{{ url_for('index') }}" class="btn btn-outline"><i class="fa-solid fa-arrow-left"></i> Back to Scanner</a>
+</header>
+
+<div class="results-grid">
+    <!-- Score & Risk Summary Header Card -->
+    <section class="card result-header-card level-border-{{ result.level|lower }}">
+        <div class="score-display">
+            <div class="score-circle level-bg-{{ result.level|lower }}">
+                <span class="score-val">{{ result.score }}</span>
+                <span class="score-max">/100</span>
+            </div>
+            <div class="score-details">
+                <span class="risk-title">Threat Classification</span>
+                <div class="badge-large badge-{{ result.level|lower }}">
+                    <i class="fa-solid {% if result.level == 'Critical' or result.level == 'High' %}fa-triangle-exclamation{% elif result.level == 'Medium' %}fa-shield-cat{% else %}fa-circle-check{% endif %}"></i>
+                    {{ result.level.upper() }} RISK
+                </div>
+                <p class="heuristic-note">
+                    <i class="fa-solid fa-circle-info"></i> Standard Heuristic Assessment: This score indicates likelihood based on known pattern matching rules and URL characteristics.
+                </p>
+            </div>
+        </div>
+
+        <div class="progress-bar-container">
+            <div class="progress-label"><span>Risk Meter</span><span>{{ result.score }}%</span></div>
+            <div class="progress-bar-track">
+                <div class="progress-bar-fill fill-{{ result.level|lower }}" style="width: {{ result.score }}%;"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Scanned Message Preview -->
+    <section class="card">
+        <h3><i class="fa-solid fa-message"></i> Submitted Message Content</h3>
+        <div class="message-preview-box">
+            <code>{{ message }}</code>
+        </div>
+        <button class="btn btn-outline btn-sm mt-2" onclick="copyReport()"><i class="fa-solid fa-copy"></i> Copy Full Analysis Summary</button>
+    </section>
+
+    <!-- Detected Indicators -->
+    <section class="card">
+        <h3><i class="fa-solid fa-bug"></i> Detected Risk Indicators ({{ result.indicators|length }})</h3>
+        {% if result.indicators %}
+        <div class="indicators-list">
+            {% for ind in result.indicators %}
+            <div class="indicator-item">
+                <div class="indicator-header">
+                    <span class="indicator-title"><i class="fa-solid fa-flag"></i> {{ ind.title }}</span>
+                    <span class="indicator-weight">+{{ ind.weight }} pts</span>
+                </div>
+                <p class="indicator-desc">{{ ind.explanation }}</p>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="clean-state">
+            <i class="fa-solid fa-shield-check text-success"></i>
+            <p>No high-risk scam keywords or suspicious URL indicators were identified in this message.</p>
+        </div>
+        {% endif %}
+    </section>
+
+    <!-- Recommendations -->
+    <section class="card">
+        <h3><i class="fa-solid fa-user-shield"></i> Recommended Safety Actions</h3>
+        <ul class="recommendation-list">
+            {% for rec in result.recommendations %}
+            <li><i class="fa-solid fa-check-double"></i> {{ rec }}</li>
+            {% endfor %}
+        </ul>
+    </section>
+</div>
+{% endblock %}

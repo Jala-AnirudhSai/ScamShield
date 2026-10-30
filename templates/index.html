@@ -1,0 +1,116 @@
+{% extends "base.html" %}
+
+{% block content %}
+<header class="page-header">
+    <div>
+        <h1>Security Dashboard</h1>
+        <p class="subtitle">Analyze emails, SMS, WhatsApp messages, and URLs for phishing risks.</p>
+    </div>
+</header>
+
+<!-- Metrics Overview Cards -->
+<section class="stats-grid">
+    <div class="card stat-card">
+        <div class="stat-icon icon-total"><i class="fa-solid fa-magnifying-glass"></i></div>
+        <div class="stat-info">
+            <span class="stat-value">{{ stats.total_scans }}</span>
+            <span class="stat-label">Total Analyzed</span>
+        </div>
+    </div>
+    <div class="card stat-card">
+        <div class="stat-icon icon-critical"><i class="fa-solid fa-triangle-exclamation"></i></div>
+        <div class="stat-info">
+            <span class="stat-value">{{ stats.high_risk_scans }}</span>
+            <span class="stat-label">High / Critical Threats</span>
+        </div>
+    </div>
+    <div class="card stat-card">
+        <div class="stat-icon icon-medium"><i class="fa-solid fa-shield-cat"></i></div>
+        <div class="stat-info">
+            <span class="stat-value">{{ stats.medium_risk_scans }}</span>
+            <span class="stat-label">Medium Risk</span>
+        </div>
+    </div>
+    <div class="card stat-card">
+        <div class="stat-icon icon-low"><i class="fa-solid fa-circle-check"></i></div>
+        <div class="stat-info">
+            <span class="stat-value">{{ stats.low_risk_scans }}</span>
+            <span class="stat-label">Low Risk / Clean</span>
+        </div>
+    </div>
+</section>
+
+<!-- Main Scanner Section -->
+<section class="card scanner-card">
+    <div class="card-header">
+        <h2><i class="fa-solid fa-radar"></i> Message & Link Scanner</h2>
+        <span class="badge badge-info">Rule-Based Analysis Engine</span>
+    </div>
+    
+    <form action="{{ url_for('scan') }}" method="POST" id="scan-form">
+        <div class="form-group">
+            <label for="message">Paste Message or URL Content:</label>
+            <textarea id="message" name="message" rows="6" placeholder="Paste suspected message, email body, SMS, or URL here..." required></textarea>
+        </div>
+
+        <div class="action-bar">
+            <div class="sample-buttons">
+                <span class="sample-label">Try Samples:</span>
+                <button type="button" class="btn btn-outline btn-sm" onclick="loadSample('bank')">Bank Scam</button>
+                <button type="button" class="btn btn-outline btn-sm" onclick="loadSample('lottery')">Prize Scam</button>
+                <button type="button" class="btn btn-outline btn-sm" onclick="loadSample('otp')">OTP Theft</button>
+                <button type="button" class="btn btn-outline btn-sm" onclick="loadSample('safe')">Safe Message</button>
+            </div>
+            <div class="form-buttons">
+                <button type="button" class="btn btn-secondary" onclick="clearInput()"><i class="fa-solid fa-eraser"></i> Clear</button>
+                <button type="submit" class="btn btn-primary" id="analyze-btn"><i class="fa-solid fa-bolt"></i> Analyze Message</button>
+            </div>
+        </div>
+    </form>
+</section>
+
+<!-- Recent Scans Table -->
+<section class="card history-card">
+    <div class="card-header">
+        <h2><i class="fa-solid fa-list-check"></i> Recent Scan Activity</h2>
+        <a href="{{ url_for('history') }}" class="link-btn">View All History →</a>
+    </div>
+
+    {% if stats.recent_scans %}
+    <div class="table-responsive">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Timestamp</th>
+                    <th>Message Snippet</th>
+                    <th>Risk Score</th>
+                    <th>Classification</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for scan in stats.recent_scans %}
+                <tr>
+                    <td class="timestamp">{{ scan.timestamp }}</td>
+                    <td class="snippet">{{ scan.message[:60] }}{% if scan.message|length > 60 %}...{% endif %}</td>
+                    <td>
+                        <div class="mini-score-bar">
+                            <span class="score-num">{{ scan.risk_score }}/100</span>
+                        </div>
+                    </td>
+                    <td>
+                        <span class="badge badge-{{ scan.risk_level|lower }}">{{ scan.risk_level }}</span>
+                    </td>
+                    <td>
+                        <a href="{{ url_for('view_scan', scan_id=scan.id) }}" class="btn btn-sm btn-outline"><i class="fa-solid fa-eye"></i> View</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <p class="empty-state">No scan history recorded yet. Paste a message above to run your first check!</p>
+    {% endif %}
+</section>
+{% endblock %}

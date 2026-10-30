@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+
+{% block content %}
+<header class="page-header">
+    <div>
+        <h1>About ScamShield</h1>
+        <p class="subtitle">Cybersecurity Portfolio Project - Phishing & Social Engineering Engine</p>
+    </div>
+</header>
+
+<div class="about-grid">
+    <section class="card">
+        <h2><i class="fa-solid fa-bullseye"></i> Project Objective</h2>
+        <p>
+            <strong>ScamShield</strong> is a lightweight, high-performance rule-based scam and phishing detection system designed to help users instantly identify fraudulent communications across SMS, email, messaging platforms, and suspicious web links.
+        </p>
+    </section>
+
+    <section class="card">
+        <h2><i class="fa-solid fa-gears"></i> Detection Architecture</h2>
+        <ul class="about-feature-list">
+            <li><strong>Pattern-Matching Rules:</strong> Natural Language Regex filters for urgent payment requests, OTP theft, lottery claims, bank verification fraud, and job scams.</li>
+            <li><strong>Heuristic URL Analyzer:</strong> Evaluates IP-address domain hosting, shorteners, HTTP usage, and brand spoofing in URLs.</li>
+            <li><strong>Weighted Scoring Matrix:</strong> Aggregates risk points up to a capped score of 100 with clear categorical risk tagging (Low, Medium, High, Critical).</li>
+            <li><strong>SQLite Persistence:</strong> Stores scan telemetry and historical detection reports securely.</li>
+        </ul>
+    </section>
+
+    <section class="card">
+        <h2><i class="fa-solid fa-microchip"></i> Technology Stack</h2>
+        <div class="tech-tags">
+            <span class="tech-tag">Python 3</span>
+            <span class="tech-tag">Flask Framework</span>
+            <span class="tech-tag">SQLite3</span>
+            <span class="tech-tag">HTML5 & CSS3</span>
+            <span class="tech-tag">Vanilla JavaScript</span>
+            <span class="tech-tag">unittest Framework</span>
+        </div>
+    </section>
+
+    <section class="card">
+        <h2><i class="fa-solid fa-shield-halved"></i> Disclaimer & Security Principles</h2>
+        <p class="text-muted">
+            This tool performs heuristic assessment for risk evaluation and does not guarantee 100% scam detection. It operates locally, does not store passwords or credentials, and never executes or visits submitted links.
+        </p>
+    </section>
+</div>
+{% endblock %}
